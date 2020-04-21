@@ -1,8 +1,8 @@
 import math
 import random
-import pymsgbox
 
 import pygame
+import pymsgbox
 from openpyxl import Workbook
 
 # Creating Microsoft Excel workbook for notating moves
@@ -52,7 +52,6 @@ pieces, colored_rectangle, moved_pieces = [], [], []
 en_passant, promoted_pawns = [], []
 blocking_pieces, castling_rectangles = [], []
 castling_locations = [(0, 2), (0, 6), (7, 2), (7, 6)]
-stopped = False
 
 # Notation Management
 notation_line, letter = 1, "A"
@@ -472,7 +471,7 @@ while running:
                 ws[letter + str(notation_line)] = "1/2"
                 wb.save("Logs/Game_Details.xlsx")
                 running = 0
-        if event.type == pygame.MOUSEBUTTONDOWN and event.button == pygame.BUTTON_LEFT and not stopped:
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == pygame.BUTTON_LEFT:
             # Left Mouse Button Pressed
             click_count += 1
             pos = pygame.mouse.get_pos()
