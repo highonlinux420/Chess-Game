@@ -135,7 +135,7 @@ def piece_check(arriving_piece, iterable):
 
 # Repeating the piece check function upon all the possible pieces
 def calculating_check(arrival):
-    global check_status, alternative_destination, blocking_piece, blocked_king, blocking_pieces
+    global alternative_destination, blocking_piece, blocked_king, blocking_pieces
     if pieces_dictionary[g].name == "Bishop":
         for I in bishops:
             if possible_bishop(I, arrival) == "True" or possible_bishop(I,
