@@ -784,9 +784,11 @@ while running:
                 # Making sure that the script won't draw the default piece on the destination rectangle
                 moved_pieces.append(pieces_dictionary[j])
             if pawn_can_pass:
+                # Removing pawn from rectangle after en passant
                 pieces_change.remove(en_passant[2])
                 moved_pieces.remove(en_passant[2])
             elif en_passant != [] and selected.color == opposing_color(en_passant[0].color):
+                # Protecting against doing en passant if not done the move when it was permitted
                 en_passant.clear()
                 pawn_can_pass = False
             selected_piece = selected
