@@ -36,7 +36,7 @@ pieces_to_piece_names = {"Bishop": bishops, "Rook": rooks, "Pawn": pawns, "Knigh
 
 # Used songs through the gameplay
 songs = ['Music/Chopin - Nocturne 1.mp3', 'Music/Chopin - Nocturne 2.mp3', 'Music/Schubert - Serenade.mp3',
-         'Music/Tchaikovsky - Music/Valse Sentimentale.mp3', 'Music/Beethoven Silence.mp3']
+         'Music/Tchaikovsky - Valse Sentimentale.mp3', 'Music/Beethoven Silence.mp3']
 
 currently_playing_song = None
 current_player, checked_player = "White", None
