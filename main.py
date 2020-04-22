@@ -832,22 +832,6 @@ while running:
                 arrival_piece = None
                 blocking_pieces.clear()
                 reject = False
-    if blocked_king is not None:  # Calculating possible king moves while in check
-        for L in pieces_dictionary:
-            for I in king_legal_moves(blocked_king):
-                if pieces_dictionary[L].id == I:
-                    if pieces_dictionary[L].color is None or pieces_dictionary[L].color == opposing_color(
-                            blocked_king.color):
-                        if pieces_dictionary[L] not in king_legal_moves_while_in_check:
-                            king_legal_moves_while_in_check.append(pieces_dictionary[L])
-        if len(king_legal_moves_while_in_check) == len(checkmate_list):  # Checking for checkmate
-            new_move = ws[letter + str(notation_line)].value.replace("+", "#")
-            # Changing check notation to checkmate notation
-            ws[letter + str(notation_line)] = new_move
-            victory.play()
-            wb.save("Logs/Game_Details.xlsx")
-            pymsgbox.alert(f"{blocking_piece.color} has won the game!", "Congratulations")
-            running = 0
     for i in king_legal_moves_while_in_check:  # Calculating if king has opportunity to get rid of check
         for g in pieces_dictionary:
             if conditions(pieces_dictionary[g], i) == 3:
@@ -861,5 +845,22 @@ while running:
     if selected_piece is not None:
         if len(blocking_pieces) != 0 and selected_piece.color == checked_player:
             reject = True
+        else:
+            if blocked_king is not None:  # Calculating possible king moves while in check
+                for L in pieces_dictionary:
+                    for I in king_legal_moves(blocked_king):
+                        if pieces_dictionary[L].id == I:
+                            if pieces_dictionary[L].color is None or pieces_dictionary[L].color == opposing_color(
+                                    blocked_king.color):
+                                if pieces_dictionary[L] not in king_legal_moves_while_in_check:
+                                    king_legal_moves_while_in_check.append(pieces_dictionary[L])
+                if len(king_legal_moves_while_in_check) == len(checkmate_list):  # Checking for checkmate
+                    new_move = ws[letter + str(notation_line)].value.replace("+", "#")
+                    # Changing check notation to checkmate notation
+                    ws[letter + str(notation_line)] = new_move
+                    victory.play()
+                    wb.save("Logs/Game_Details.xlsx")
+                    pymsgbox.alert(f"{blocking_piece.color} has won the game!", "Congratulations")
+                    running = 0
     # Updating the display
     pygame.display.update()
