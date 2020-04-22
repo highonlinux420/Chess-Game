@@ -120,8 +120,8 @@ def piece_check(arriving_piece, iterable):
     if conditions(iterable, arriving_piece) == 1:  # The checked piece is a king
         blocking_piece = iterable
         blocked_king = arriving_piece
-        if blocking_piece.id not in blocking_pieces:
-            blocking_pieces.append(blocking_piece.id)
+        if (blocking_piece.id, blocking_piece.color) not in blocking_pieces:
+            blocking_pieces.append((blocking_piece.id, blocking_piece.color))
     elif conditions(iterable, arriving_piece) == 2:
         # The checked piece is in the king's path while castling
         if iterable.id not in castling_rectangles:
@@ -850,18 +850,14 @@ while running:
             if blocked_king is not None:  # Calculating possible king moves while in check
                 count = 0
                 for K in blocking_pieces:
-                    for T in pieces_dictionary:
-                        if pieces_dictionary[T].id == K:
-                            if pieces_dictionary[T].color == opposing_color(blocked_king.color):
-                                count += 1
+                    if K[1] == opposing_color(blocked_king.color):
+                        count += 1
                 if count == len(blocking_pieces) != 0:
                     for L in pieces_dictionary:
                         for I in king_legal_moves(blocked_king):
-                            if pieces_dictionary[L].id == I:
-                                if pieces_dictionary[L].color is None or pieces_dictionary[L].color == opposing_color(
-                                        blocked_king.color):
-                                    if pieces_dictionary[L] not in king_legal_moves_while_in_check:
-                                        king_legal_moves_while_in_check.append(pieces_dictionary[L])
+                            if pieces_dictionary[L].id == I and pieces_dictionary[L].color != blocked_king.color:
+                                if pieces_dictionary[L] not in king_legal_moves_while_in_check:
+                                    king_legal_moves_while_in_check.append(pieces_dictionary[L])
                     if len(king_legal_moves_while_in_check) == len(checkmate_list):  # Checking for checkmate
                         new_move = ws[letter + str(notation_line)].value.replace("+", "#")
                         # Changing check notation to checkmate notation
