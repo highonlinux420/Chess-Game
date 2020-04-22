@@ -551,7 +551,7 @@ while running:
                                     selected.color == "Black" and destination.id[0] == 7):
                                 # Hide window until alert dismissed
                                 pygame.display.set_mode((1, 1))
-                                the_box = pymsgbox.alert("The pawn will be promoted to a queens!", "Great!")
+                                the_box = pymsgbox.alert("The pawn will be promoted to a Queen!", "Great!")
                                 if the_box == "OK":
                                     # Show window again
                                     pygame.display.set_mode((800, 800))
