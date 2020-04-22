@@ -134,7 +134,7 @@ def piece_check(arriving_piece, iterable):
 
 # Repeating the piece check function upon all the possible pieces
 def calculating_check(arrival):
-    global alternative_destination, blocking_piece, blocked_king, blocking_pieces
+    global alternative_destination, blocking_piece, blocked_king, blocking_pieces, checked_player
     if pieces_dictionary[g].name == "Bishop":
         for I in bishops:
             if possible_bishop(I, arrival) == "True" or possible_bishop(I,
@@ -170,6 +170,7 @@ def calculating_check(arrival):
         checkmate_list.clear()
         blocked_king = None
         blocking_piece = None
+        checked_player = None
 
 
 # Adding each piece from the pieces dictionary to it's convenient array (rooks, queens, pawns)
@@ -453,14 +454,6 @@ def logical_pawn(departure, arrival):
 
 # Main loop
 while running:
-    # Checking if the king is blocked
-    if len(blocking_pieces) != 0:
-        checked_player = opposing_color(blocking_piece.color)
-        # Adding check notations
-        if "+" not in ws[letter + str(notation_line)].value:
-            ws[letter + str(notation_line)] = ws[letter + str(notation_line)].value + "+"
-    else:
-        checked_player = None
     for event in pygame.event.get():
         # Looping through events
         if event.type == pygame.QUIT:
@@ -494,6 +487,7 @@ while running:
                         else:
                             # Hide window until alert dismissed
                             pygame.display.set_mode((1, 1))
+                            error_sound.play()
                             the_box = pymsgbox.alert("It's White's Turn", "Wrong Choice")
                             if the_box == "OK":
                                 # Show window again
@@ -506,6 +500,7 @@ while running:
                         else:
                             # Hide window until alert dismissed
                             pygame.display.set_mode((1, 1))
+                            error_sound.play()
                             the_box = pymsgbox.alert("It's Black's Turn", "Wrong Choice")
                             if the_box == "OK":
                                 # Show window again
@@ -514,6 +509,7 @@ while running:
                 else:
                     # Hide window until alert dismissed
                     pygame.display.set_mode((1, 1))
+                    error_sound.play()
                     the_box = pymsgbox.alert("Empty Box Chosen", "Wrong Choice")
                     if the_box == "OK":
                         # Show window again
@@ -524,6 +520,7 @@ while running:
                 if hasattr(rectangle, "piece") and rectangle.color == selected.color:
                     # Hide window until alert dismissed
                     pygame.display.set_mode((1, 1))
+                    error_sound.play()
                     the_box = pymsgbox.alert("Choose a correct position", "Wrong Choice")
                     if the_box == "OK":
                         # Show window again
@@ -809,13 +806,17 @@ while running:
                 pieces.remove(i)
                 if selected_piece in pieces_change:
                     pieces_change.remove(selected_piece)
+                if selected_piece.name == "Pawn":
+                    pawns.remove(arrival_piece)
+                if selected_piece.name == "Knight":
+                    knights.remove(arrival_piece)
                 pieces.append([selected_piece, selected_piece.piece, selected_piece.name, selected_piece.color])
                 if hasattr(arrival_piece, "piece"):
-                    if arrival_piece in pawns:
-                        pawns.remove(arrival_piece)
                     pieces.append([arrival_piece, arrival_piece.piece, arrival_piece.name, arrival_piece.color])
-                    if arrival_piece.name == "Pawn":  # Re-adding pawn piece into it's array to refresh relevant data
+                    if arrival_piece.name == "Pawn":  # Re-adding knight piece into it's array to refresh relevant data
                         pawns.append(arrival_piece)
+                    if arrival_piece.name == "Knight":  # Re-adding knight piece into it's array to refresh relevant data
+                        knights.append(arrival_piece)
                 error_sound.play()
                 # Hide windows until alert dismissed
                 pygame.display.set_mode((1, 1))
@@ -843,24 +844,39 @@ while running:
                 # Calculating the possibility of falling in check while castling
                 calculating_check(pieces_dictionary[s])
     if selected_piece is not None:
-        if len(blocking_pieces) != 0 and selected_piece.color == checked_player:
+        if len(blocking_pieces) != 0 and selected_piece.color == blocked_king.color:
             reject = True
         else:
             if blocked_king is not None:  # Calculating possible king moves while in check
-                for L in pieces_dictionary:
-                    for I in king_legal_moves(blocked_king):
-                        if pieces_dictionary[L].id == I:
-                            if pieces_dictionary[L].color is None or pieces_dictionary[L].color == opposing_color(
-                                    blocked_king.color):
-                                if pieces_dictionary[L] not in king_legal_moves_while_in_check:
-                                    king_legal_moves_while_in_check.append(pieces_dictionary[L])
-                if len(king_legal_moves_while_in_check) == len(checkmate_list):  # Checking for checkmate
-                    new_move = ws[letter + str(notation_line)].value.replace("+", "#")
-                    # Changing check notation to checkmate notation
-                    ws[letter + str(notation_line)] = new_move
-                    victory.play()
-                    wb.save("Logs/Game_Details.xlsx")
-                    pymsgbox.alert(f"{blocking_piece.color} has won the game!", "Congratulations")
-                    running = 0
+                count = 0
+                for K in blocking_pieces:
+                    for T in pieces_dictionary:
+                        if pieces_dictionary[T].id == K:
+                            if pieces_dictionary[T].color == opposing_color(blocked_king.color):
+                                count += 1
+                if count == len(blocking_pieces) != 0:
+                    for L in pieces_dictionary:
+                        for I in king_legal_moves(blocked_king):
+                            if pieces_dictionary[L].id == I:
+                                if pieces_dictionary[L].color is None or pieces_dictionary[L].color == opposing_color(
+                                        blocked_king.color):
+                                    if pieces_dictionary[L] not in king_legal_moves_while_in_check:
+                                        king_legal_moves_while_in_check.append(pieces_dictionary[L])
+                    if len(king_legal_moves_while_in_check) == len(checkmate_list):  # Checking for checkmate
+                        new_move = ws[letter + str(notation_line)].value.replace("+", "#")
+                        # Changing check notation to checkmate notation
+                        ws[letter + str(notation_line)] = new_move
+                        victory.play()
+                        wb.save("Logs/Game_Details.xlsx")
+                        pymsgbox.alert(f"{blocking_piece.color} has won the game!", "Congratulations")
+                        running = 0
+                else:
+                    reject = True
+    # Checking if the king is blocked
+    if len(blocking_pieces) != 0:
+        checked_player = opposing_color(blocking_piece.color)
+        # Adding check notations
+        if "+" not in ws[letter + str(notation_line)].value:
+            ws[letter + str(notation_line)] = ws[letter + str(notation_line)].value + "+"
     # Updating the display
     pygame.display.update()
