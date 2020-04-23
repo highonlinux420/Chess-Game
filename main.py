@@ -101,14 +101,14 @@ def opposing_color(inputcolor):
 # Conditions for the calculating check function to be executed
 def conditions(start, end):
     global blocked_king, blocking_piece
-    if end not in king_legal_moves_while_in_check:
+    if end not in king_legal_moves_while_in_check and start.name != "King":
         if opposing_color(start.color) == end.color and end.name == "King":
             return 1
         elif end.color is None and end.id[1] in castling_locations and (end.id[0] == 7 and start.color == "Black" or \
                 end.id[0] == 0 and start.color == "White") and checked_player is None:
             return 2
     elif blocked_king is not None and opposing_color(
-            start.color) == blocked_king.color and end.color is None or end.color == start.color:
+            start.color) == blocked_king.color and (end.color is None or end.color == start.color):
         return 3
 
 
@@ -174,11 +174,12 @@ def calculating_check(arrival):
 # Adding each piece from the pieces dictionary to it's convenient array (rooks, queens, pawns)
 def minimal_adding(piece_name):
     if pieces_dictionary[j].name == piece_name:
+        previous_color = [x.color for x in pieces_to_piece_names[piece_name] if x == pieces_dictionary[j]]
         for l in pieces_to_piece_names[piece_name]:
             if l in pieces_change:
                 pieces_to_piece_names[piece_name].remove(l)
-        if pieces_dictionary[j] not in pieces_to_piece_names[piece_name]:
-            pieces_to_piece_names[piece_name].append(pieces_dictionary[j])
+        if pieces_dictionary[j] not in pieces_to_piece_names[piece_name] or previous_color[0] != pieces_dictionary[j].color and len(previous_color) == 1:
+                pieces_to_piece_names[piece_name].append(pieces_dictionary[j])
 
 
 # Repeating the minimal adding function over all the pieces
@@ -808,15 +809,11 @@ while running:
                     pieces_change.remove(selected_piece)
                 if selected_piece.name == "Pawn":
                     pawns.remove(arrival_piece)
-                if selected_piece.name == "Knight":
+                elif selected_piece.name == "Knight":
                     knights.remove(arrival_piece)
                 pieces.append([selected_piece, selected_piece.piece, selected_piece.name, selected_piece.color])
                 if hasattr(arrival_piece, "piece"):
                     pieces.append([arrival_piece, arrival_piece.piece, arrival_piece.name, arrival_piece.color])
-                    if arrival_piece.name == "Pawn":  # Re-adding knight piece into it's array to refresh relevant data
-                        pawns.append(arrival_piece)
-                    if arrival_piece.name == "Knight":  # Re-adding knight piece into it's array to refresh relevant data
-                        knights.append(arrival_piece)
                 error_sound.play()
                 # Hide windows until alert dismissed
                 pygame.display.set_mode((1, 1))
