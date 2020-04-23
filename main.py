@@ -51,7 +51,7 @@ pieces_change, selected = [], 0
 pieces, colored_rectangle, moved_pieces = [], [], []
 en_passant, promoted_pawns = [], []
 blocking_pieces, castling_rectangles = [], []
-castling_locations = [(0, 2), (0, 6), (7, 2), (7, 6)]
+castling_locations = [2, 3, 5, 6]
 
 # Notation Management
 notation_line, letter = 1, "A"
@@ -101,13 +101,11 @@ def opposing_color(inputcolor):
 # Conditions for the calculating check function to be executed
 def conditions(start, end):
     global blocked_king, blocking_piece
-    if end not in king_legal_moves_while_in_check and end.name == "King":
-        if opposing_color(start.color) == end.color:
+    if end not in king_legal_moves_while_in_check:
+        if opposing_color(start.color) == end.color and end.name == "King":
             return 1
-        elif end.color is None and end.id in [castling_locations[2], castling_locations[
-            3]] and start.color == "Black" or \
-                end.id in [castling_locations[0], castling_locations[1]] and start.color == "White" and len(
-            blocking_pieces) != 0:
+        elif end.color is None and end.id[1] in castling_locations and (end.id[0] == 7 and start.color == "Black" or \
+                end.id[0] == 0 and start.color == "White") and checked_player is None:
             return 2
     elif blocked_king is not None and opposing_color(
             start.color) == blocked_king.color and end.color is None or end.color == start.color:
@@ -781,8 +779,10 @@ while running:
                 moved_pieces.append(pieces_dictionary[j])
             if pawn_can_pass:
                 # Removing pawn from rectangle after en passant
-                pieces_change.remove(en_passant[2])
-                moved_pieces.remove(en_passant[2])
+                if en_passant[2] in pieces_change:
+                    pieces_change.remove(en_passant[2])
+                if en_passant[2] in moved_pieces:
+                    moved_pieces.remove(en_passant[2])
             elif en_passant != [] and selected.color == opposing_color(en_passant[0].color):
                 # Protecting against doing en passant if not done the move when it was permitted
                 en_passant.clear()
@@ -852,7 +852,7 @@ while running:
                 for K in blocking_pieces:
                     if K[1] == opposing_color(blocked_king.color):
                         count += 1
-                if count == len(blocking_pieces) != 0:
+                if count == len(blocking_pieces):
                     for L in pieces_dictionary:
                         for I in king_legal_moves(blocked_king):
                             if pieces_dictionary[L].id == I and pieces_dictionary[L].color != blocked_king.color:
