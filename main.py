@@ -459,7 +459,13 @@ def logical_pawn(departure, arrival):
 
 
 def castling(chosen_piece, second_piece, notation):
+    global notation_line, letter
     if len(castling_rectangles) == 0:
+        if current_player == "White":
+            letter = "A"
+            notation_line += 1
+        else:
+            letter = "B"
         moved_pieces.append(chosen_piece)
         pieces.append(
             [second_piece, chosen_piece.piece,
@@ -688,12 +694,12 @@ if __name__ == "__main__":
                             piece_letter = "K"
                         if going_ahead:
                             # On successful move
-                            if current_player == "White":
-                                letter = "A"
-                                notation_line += 1
-                            else:
-                                letter = "B"
                             if go_king and selected.name == "King" or selected.name != "King":
+                                if current_player == "White":
+                                    letter = "A"
+                                    notation_line += 1
+                                else:
+                                    letter = "B"
                                 if alternative_destination != 0:
                                     # Selected Piece captures another piece
                                     adding_notations(piece_letter, str(notation_columns[selected.id[1]]), "x",
