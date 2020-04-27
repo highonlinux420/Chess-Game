@@ -161,7 +161,10 @@ def calculating_check(beginning, arrival):
         # Clearing the unnecessary variables
         king_legal_moves_while_in_check.clear()
         for x in checkmate_list:
-            checkmate_list.remove(x)
+            try:
+                checkmate_list.remove(x)
+            except ValueError:
+                pass
         blocked_king = None
         blocking_piece = None
         checked_player = None
