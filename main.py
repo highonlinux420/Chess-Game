@@ -513,7 +513,6 @@ if __name__ == "__main__":
                     running = 0
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == pygame.BUTTON_LEFT:
                 # Left Mouse Button Pressed
-                # Starting parallel process
                 click_count += 1
                 pos = pygame.mouse.get_pos()
                 distances1 = []
