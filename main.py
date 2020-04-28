@@ -349,9 +349,9 @@ class Rectangle(pygame.Rect):
                 self.rect_color = (255, 255, 255)
 
     # Function for drawing pieces on the rectangle
-    def draw(self, name, color):
-        self.piece_name = pygame.image.load(f"Images/{color} {name}.png").convert_alpha()
-        self.piece = screen.blit(self.piece_name, (self.centerx - 30, self.centery - 30))
+    def draw(self):
+        piece_name = pygame.image.load(f"Images/{self.color} {self.name}.png").convert_alpha()
+        self.piece = screen.blit(piece_name, (self.centerx - 30, self.centery - 30))
 
 
 # Calculating distance between two objects
@@ -778,23 +778,23 @@ if __name__ == "__main__":
                         pieces_dictionary[j].color = "White"
                     if key[0] in [1, 6]:
                         pieces_dictionary[j].name = "Pawn"
-                        pieces_dictionary[j].draw(color=pieces_dictionary[j].color, name=pieces_dictionary[j].name)
+                        pieces_dictionary[j].draw()
                     elif key[0] in [0, 7]:
                         if key[1] in [0, 7]:
                             pieces_dictionary[j].name = "Rook"
-                            pieces_dictionary[j].draw(color=pieces_dictionary[j].color, name=pieces_dictionary[j].name)
+                            pieces_dictionary[j].draw()
                         elif key[1] in [1, 6]:
                             pieces_dictionary[j].name = "Knight"
-                            pieces_dictionary[j].draw(color=pieces_dictionary[j].color, name=pieces_dictionary[j].name)
+                            pieces_dictionary[j].draw()
                         elif key[1] in [2, 5]:
                             pieces_dictionary[j].name = "Bishop"
-                            pieces_dictionary[j].draw(color=pieces_dictionary[j].color, name=pieces_dictionary[j].name)
+                            pieces_dictionary[j].draw()
                         elif key[1] == 3:
                             pieces_dictionary[j].name = "Queen"
-                            pieces_dictionary[j].draw(color=pieces_dictionary[j].color, name=pieces_dictionary[j].name)
+                            pieces_dictionary[j].draw()
                         elif key[1] == 4:
                             pieces_dictionary[j].name = "King"
-                            pieces_dictionary[j].draw(color=pieces_dictionary[j].color, name=pieces_dictionary[j].name)
+                            pieces_dictionary[j].draw()
                     adding_pieces()
             if destination == pieces_dictionary[j]:
                 # Pieces array takes care of re-drawing moved pieces
@@ -832,7 +832,7 @@ if __name__ == "__main__":
                         pieces_dictionary[j].name = i[2]
                     pieces_dictionary[j].color = i[3]
                     adding_pieces()
-                    pieces_dictionary[j].draw(pieces_dictionary[j].name, pieces_dictionary[j].color)
+                    pieces_dictionary[j].draw()
                 if selected_piece is not None and reject and arrival_piece in i:
                     # Protecting against putting own king in check
                     pieces.remove(i)
